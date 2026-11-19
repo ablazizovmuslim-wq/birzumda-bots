@@ -14,6 +14,7 @@ from aiogram.types import BotCommand
 
 from bots import eslatma, hisob, lotin, musiqa, stiker
 from common import common_router, init_db
+from profile import apply_profile
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 MODULES = [lotin, hisob, stiker, musiqa, eslatma]
@@ -34,6 +35,7 @@ async def run_one(mod):
             await bot.set_my_commands([BotCommand(command="start", description=text)], language_code=None if lang == "uz" else lang)
         except Exception as e:
             logging.warning("%s komandalar: %s", mod.KEY, e)
+    await apply_profile(bot, mod.KEY)  # About, Description va avatarka (faqat o'zgarganda)
     if hasattr(mod, "background"):
         asyncio.create_task(mod.background(bot))
     logging.info("%s ishga tushdi", mod.KEY)
