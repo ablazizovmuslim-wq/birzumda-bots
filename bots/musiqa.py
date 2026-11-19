@@ -7,7 +7,7 @@ from aiogram import Bot, F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import FSInputFile, Message
 
-from common import LANGS, count, get_lang, menu, touch, tr
+from common import variants, LANGS, count, get_lang, menu, touch, tr
 
 KEY, USERNAME = "musiqa", "Birzumda_Musiqa_bot"
 MAX_MB = 20  # oddiy Telegram Bot API yuklab olish chegarasi
@@ -57,12 +57,12 @@ def make_router() -> Router:
         lang = touch(KEY, m.from_user)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_help"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_help"])))
     async def help_(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_yukla"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_yukla"])))
     async def yukla(m: Message):
         await m.answer(TX["yukla"][get_lang(KEY, m.from_user.id)])
 

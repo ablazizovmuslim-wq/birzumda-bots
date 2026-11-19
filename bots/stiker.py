@@ -7,7 +7,7 @@ from aiogram.types import (BufferedInputFile, CallbackQuery, InlineKeyboardButto
                            Message)
 from PIL import Image, ImageOps
 
-from common import LANGS, count, db, get_lang, menu, touch, tr
+from common import variants, LANGS, count, db, get_lang, menu, touch, tr
 
 KEY, USERNAME = "stiker", "Birzumda_Stiker_bot"
 
@@ -74,12 +74,12 @@ def make_router() -> Router:
         lang = touch(KEY, m.from_user)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_help"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_help"])))
     async def help_(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_pack"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_pack"])))
     async def my_pack(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         with db() as con:

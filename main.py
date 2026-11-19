@@ -13,7 +13,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 
 from bots import eslatma, hisob, lotin, musiqa, stiker
-from common import common_router, init_db
+from common import EmojiMiddleware, common_router, init_db, load_emoji
 from profile import apply_profile
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -27,6 +27,7 @@ async def run_one(mod):
         logging.info("%s: token yo'q — o'tkazib yuborildi", mod.KEY)
         return
     bot = Bot(token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot.session.middleware(EmojiMiddleware())  # 💎 premium emoji hamma xabarlarda
     dp = Dispatcher()
     dp.include_router(common_router(mod.KEY, mod.USERNAME, mod.on_lang))  # umumiy tugmalar birinchi
     dp.include_router(mod.make_router())
@@ -44,6 +45,7 @@ async def run_one(mod):
 
 async def main():
     init_db()
+    load_emoji()
     await asyncio.gather(*(run_one(m) for m in MODULES))
 
 

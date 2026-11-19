@@ -5,7 +5,7 @@ from aiogram import Bot, F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import (BufferedInputFile, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message)
 
-from common import CT, LANGS, count, get_lang, menu, touch, tr
+from common import variants, CT, LANGS, count, get_lang, menu, touch, tr
 from translit import convert
 
 KEY, USERNAME = "lotin", "Birzumda_Lotin_bot"
@@ -83,15 +83,15 @@ def make_router() -> Router:
         lang = touch(KEY, m.from_user)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_help"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_help"])))
     async def help_(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_lat"][x] for x in LANGS} | {TX["b_cyr"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_lat"]) | variants(TX["b_cyr"])))
     async def mode(m: Message):
         lang = get_lang(KEY, m.from_user.id)
-        to = "lat" if m.text in {TX["b_lat"][x] for x in LANGS} else "cyr"
+        to = "lat" if m.text in variants(TX["b_lat"]) else "cyr"
         MODE[m.from_user.id] = to
         await m.answer(TX["mode_" + to][lang])
 

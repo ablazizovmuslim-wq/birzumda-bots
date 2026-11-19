@@ -8,7 +8,7 @@ from aiogram import Bot, F, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from common import LANGS, count, db, get_lang, log, menu, now_local, touch, tr
+from common import variants, LANGS, count, db, get_lang, log, menu, now_local, touch, tr
 
 KEY, USERNAME = "eslatma", "Birzumda_Eslatma_bot"
 FMT = "%Y-%m-%d %H:%M"
@@ -171,12 +171,12 @@ def make_router() -> Router:
         lang = touch(KEY, m.from_user)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_help"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_help"])))
     async def help_(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_list"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_list"])))
     async def my_list(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         with db() as con:
@@ -195,11 +195,11 @@ def make_router() -> Router:
         kb_ = [row for row in c.message.reply_markup.inline_keyboard if row[0].callback_data != c.data]
         await c.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(inline_keyboard=kb_) if kb_ else None)
 
-    @r.message(F.text.in_({TX["b_sched"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_sched"])))
     async def sched(m: Message):
         await show_sched(m, m.from_user.id, get_lang(KEY, m.from_user.id))
 
-    @r.message(F.text.in_({TX["b_today"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_today"])))
     async def today(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         wd = now_local().weekday()

@@ -8,7 +8,7 @@ from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import BufferedInputFile, Message
 
-from common import LANGS, count, get_lang, menu, touch, tr
+from common import variants, LANGS, count, get_lang, menu, touch, tr
 
 KEY, USERNAME = "hisob", "Birzumda_Hisob_bot"
 CBU_URL = "https://cbu.uz/uz/arkhiv-kursov-valyut/json/"
@@ -125,7 +125,7 @@ def make_router() -> Router:
         MODE.pop(m.from_user.id, None)
         await m.answer(tr(TX["start"], lang, name=m.from_user.first_name), reply_markup=kb(lang))
 
-    @r.message(F.text.in_({TX["b_rates"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_rates"])))
     async def show_rates(m: Message):
         lang = get_lang(KEY, m.from_user.id)
         try:
@@ -141,17 +141,17 @@ def make_router() -> Router:
                 lines.append(f"{FLAGS.get(c, '')} <b>1 {c}</b> = {fmt(rate)}  {arrow}{abs(diff):g}")
         await m.answer(TX["rates_t"][lang].format(date=_rates["date"]) + "\n".join(lines) + "\n\n⚡ @" + USERNAME)
 
-    @r.message(F.text.in_({TX["b_conv"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_conv"])))
     async def conv_mode(m: Message):
         MODE[m.from_user.id] = "conv"
         await m.answer(TX["conv_h"][get_lang(KEY, m.from_user.id)])
 
-    @r.message(F.text.in_({TX["b_qr"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_qr"])))
     async def qr_mode(m: Message):
         MODE[m.from_user.id] = "qr"
         await m.answer(TX["qr_h"][get_lang(KEY, m.from_user.id)])
 
-    @r.message(F.text.in_({TX["b_loan"][x] for x in LANGS}))
+    @r.message(F.text.in_(variants(TX["b_loan"])))
     async def loan_mode(m: Message):
         MODE[m.from_user.id] = "loan"
         await m.answer(TX["loan_h"][get_lang(KEY, m.from_user.id)])
